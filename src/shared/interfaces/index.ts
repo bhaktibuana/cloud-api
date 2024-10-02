@@ -22,3 +22,9 @@ export interface I_VerifiedJWT<T> {
 	error: VerifyErrors | null;
 	decoded: (JwtPayload & T) | Object;
 }
+
+export interface I_UploaderSingle {
+	file_name: string;
+	path: string;
+	raw_path: string;
+}

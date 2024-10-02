@@ -1,11 +1,16 @@
+import multer from 'multer';
+import { promisify } from 'util';
+
 import { BaseMiddleware } from '@/transport/middlewares/base.middleware';
 import { Helper } from '@/shared/helpers';
 import { Next, Req, Res } from '@/shared/types/express';
 import { S_User } from '@/app/models';
 import { UserService } from '@/app/services';
+import { Uploader } from '@/shared/utils/uploader.util';
 
 export class Middleware extends BaseMiddleware {
 	private userSvc: UserService;
+	private upload = multer({ dest: 'public/tmp' });
 
 	constructor() {
 		super();
@@ -51,6 +56,25 @@ export class Middleware extends BaseMiddleware {
 			next();
 		} catch (error) {
 			await this.catchErrorHandler(res, error, this.auth.name);
+		}
+	}
+
+	/**
+	 * Upload Single Middleware
+	 *
+	 * @param req
+	 * @param res
+	 * @param next
+	 */
+	public async uploadSingle(req: Req, res: Res, next: Next): Promise<void> {
+		try {
+			await Uploader.init();
+			const uploadSingleFile = promisify(this.upload.single('file'));
+			await uploadSingleFile(req, res);
+
+			next();
+		} catch (error) {
+			await this.catchErrorHandler(res, error, this.uploadSingle.name);
 		}
 	}
 }
