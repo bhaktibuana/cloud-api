@@ -53,4 +53,19 @@ export class RepositoryService extends Service {
 		}
 		return null;
 	}
+
+	/**
+	 * Repository List Service
+	 *
+	 * @param userId
+	 * @returns
+	 */
+	public async list(userId: string): Promise<S_Repository[]> {
+		try {
+			return await this.repositoryRepo.getList(userId);
+		} catch (error) {
+			await this.catchErrorHandler(error, this.list.name);
+		}
+		return [];
+	}
 }

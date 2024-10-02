@@ -51,4 +51,22 @@ export class RepositoryRepository extends Repository {
 		}
 		return result;
 	}
+
+	/**
+	 * Get Repository list
+	 *
+	 * @param userId
+	 * @returns
+	 */
+	public async getList(userId: string): Promise<S_Repository[]> {
+		let result: S_Repository[] = [];
+		const repository = new Repo();
+
+		try {
+			result = await repository.find({ user_id: userId });
+		} catch (error) {
+			await this.catchErrorHandler(error, this.getList.name);
+		}
+		return result;
+	}
 }

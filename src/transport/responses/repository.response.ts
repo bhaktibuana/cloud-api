@@ -16,4 +16,16 @@ export class RepositoryResponse {
 			token: payload.token,
 		};
 	}
+
+	/**
+	 * Repository List Response
+	 *
+	 * @param payload
+	 * @returns
+	 */
+	public list(payload: S_Repository[] | null) {
+		if (payload === null) return null;
+		if (payload.length === 0) return [] as S_Repository[];
+		return payload;
+	}
 }

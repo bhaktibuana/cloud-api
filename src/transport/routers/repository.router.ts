@@ -8,5 +8,6 @@ export class RepositoryRouter extends Router<RepositoryController> {
 		super(router, '/repository', new RepositoryController());
 
 		this.post('/create', this.controller.create, ['auth']);
+		this.get('/', this.controller.list, ['auth']);
 	}
 }

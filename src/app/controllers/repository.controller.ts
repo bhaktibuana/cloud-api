@@ -37,12 +37,35 @@ export class RepositoryController extends Controller {
 
 			this.response(
 				res,
-				'Register success',
+				'Create repository success',
 				this.STATUS_CODE.CREATED,
 				this.repositoryRes.create(result),
 			);
 		} catch (error) {
 			await this.catchErrorHandler(res, error, this.create.name);
+		}
+	}
+
+	/**
+	 * Repository List Controller
+	 *
+	 * @param req
+	 * @param res
+	 */
+	public async list(_req: Request, res: Response): Promise<void> {
+		try {
+			const user = this.getLocals(res).user;
+
+			const result = await this.repositorySvc.list(user._id as string);
+
+			this.response(
+				res,
+				'Repository list',
+				this.STATUS_CODE.OK,
+				this.repositoryRes.list(result),
+			);
+		} catch (error) {
+			await this.catchErrorHandler(res, error, this.list.name);
 		}
 	}
 }
