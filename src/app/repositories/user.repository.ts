@@ -49,4 +49,25 @@ export class UserRepository extends Repository {
 		}
 		return result;
 	}
+
+	/**
+	 * Find One by Email and Password
+	 *
+	 * @param email
+	 * @returns
+	 */
+	public async findLogin(
+		email: string,
+		password: string,
+	): Promise<S_User | null> {
+		let result: S_User | null = null;
+		const user = new User();
+
+		try {
+			result = await user.findOne({ email, password }, { email: 1 });
+		} catch (error) {
+			await this.catchErrorHandler(error, this.findOneByEmail.name);
+		}
+		return result;
+	}
 }

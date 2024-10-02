@@ -14,4 +14,19 @@ export class UserResponse {
 			email: payload.email,
 		};
 	}
+
+	/**
+	 * User Login Response
+	 *
+	 * @param payload
+	 * @returns
+	 */
+	public login(payload: { user: S_User | null; token: string } | null) {
+		if (!payload || !payload.user) return null;
+		return {
+			_id: payload.user.id,
+			email: payload.user.email,
+			token: payload.token,
+		};
+	}
 }
