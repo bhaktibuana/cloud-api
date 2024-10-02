@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import path from 'path';
 
 import { Config } from '@/config';
+import { Mongo } from '@/shared/utils';
 import { Routers } from '@/transport/routers';
 
 class Main {
@@ -23,7 +24,13 @@ class Main {
 	/**
 	 * App Init
 	 */
-	private init(): void {}
+	private init(): void {
+		Mongo.connectMainDb(Config.db.MAIN_DB_DSN, Config.db.MAIN_DB_NAME);
+		Mongo.connectUtilityDb(
+			Config.db.UTILITY_DB_DSN,
+			Config.db.UTILITY_DB_NAME,
+		);
+	}
 
 	/**
 	 * App Middlewares

@@ -54,7 +54,6 @@ export abstract class BaseMiddleware {
 		status: 'success' | 'failed' = 'failed',
 		slug: string | null = null,
 	): Promise<void> {
-		Mongo.connect(Config.db.UTILITY_DB_DSN, Config.db.UTILITY_DB_NAME);
 		const systemLog = new SystemLog();
 		systemLog.payload = {
 			app_name: Constant.app.APP_NAME,

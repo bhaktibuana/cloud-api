@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
-import mongoose, { Document, Model as MongoModel, Schema } from 'mongoose';
+import { Document, Model as MongoModel, Schema } from 'mongoose';
 
 import { Model } from '@/shared/libs/model.lib';
+import { Mongo } from '@/shared/utils';
 
 export interface S_SystemLog extends S_SystemLogBase, Document {}
 
@@ -67,8 +68,8 @@ export class SystemLog extends Model<S_SystemLog> {
 
 	constructor() {
 		super(
-			mongoose.models.system_log ||
-				(mongoose.model<S_SystemLog>(
+			Mongo.getUtilityDbConnection().models.system_log ||
+				(Mongo.getUtilityDbConnection().model<S_SystemLog>(
 					'system_log',
 					SystemLogSchema.getSchema(),
 				) as MongoModel<S_SystemLog>),
