@@ -1,8 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { SystemLog } from '@/app/models';
-import { AppError } from '@/shared/utils';
+import { AppError, Mongo } from '@/shared/utils';
 import { T_AppErrorData } from '@/shared/types';
+import { Config } from '@/config';
+import { Constant } from '@/shared/constants';
 
 export abstract class Repository {
 	protected readonly STATUS_CODE = StatusCodes;
@@ -41,8 +43,10 @@ export abstract class Repository {
 		status: 'success' | 'failed' = 'failed',
 		slug: string | null = null,
 	): Promise<void> {
+		Mongo.connect(Config.db.UTILITY_DB_DSN, Config.db.UTILITY_DB_NAME);
 		const systemLog = new SystemLog();
 		systemLog.payload = {
+			app_name: Constant.app.APP_NAME,
 			class_name: this.constructor.name,
 			function_name: functionName,
 			slug,
