@@ -13,7 +13,13 @@ services:
             - ../.env.prod
         networks:
             - cloud_api_network
+        volumes:
+            - ../public:/app/public
 
 networks:
     cloud_api_network:
         name: cloud_api_network
+
+volumes:
+    public:
+        driver: local
