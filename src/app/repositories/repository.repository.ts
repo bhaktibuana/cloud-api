@@ -69,4 +69,29 @@ export class RepositoryRepository extends Repository {
 		}
 		return result;
 	}
+
+	/**
+	 * Find One by user_id and name
+	 *
+	 * @param userId
+	 * @param name
+	 * @returns
+	 */
+	public async checkRepo(
+		userId: string,
+		name: string,
+	): Promise<S_Repository | null> {
+		let result: S_Repository | null = null;
+		const repository = new Repo();
+
+		try {
+			result = await repository.findOne(
+				{ user_id: userId, name },
+				{ name: 1 },
+			);
+		} catch (error) {
+			await this.catchErrorHandler(error, this.checkRepo.name);
+		}
+		return result;
+	}
 }
