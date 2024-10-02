@@ -1,3 +1,5 @@
+import { ObjectId } from 'bson';
+
 import { Helper } from '@/shared/helpers';
 import { Service } from '@/shared/libs/service.lib';
 import {
@@ -37,10 +39,7 @@ export class UserService extends Service {
 					'Email already exist',
 				);
 
-			return await this.userRepo.create(
-				reqBody.email.toLowerCase(),
-				Helper.hash(reqBody.password),
-			);
+			return await this.userRepo.create(payload.email, payload.password);
 		} catch (error) {
 			await this.catchErrorHandler(error, this.register.name);
 		}
@@ -76,6 +75,26 @@ export class UserService extends Service {
 			return { user, token };
 		} catch (error) {
 			await this.catchErrorHandler(error, this.login.name);
+		}
+		return null;
+	}
+
+	/**
+	 * User Me Service
+	 *
+	 * @param id
+	 * @returns
+	 */
+	public async me(id: string): Promise<S_User | null> {
+		try {
+			const user = await this.userRepo.findById(new ObjectId(id));
+
+			if (!user)
+				this.errorHandler(this.STATUS_CODE.NOT_FOUND, 'User not found');
+
+			return user;
+		} catch (error) {
+			await this.catchErrorHandler(error, this.me.name);
 		}
 		return null;
 	}
