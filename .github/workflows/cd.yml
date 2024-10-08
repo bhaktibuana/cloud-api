@@ -1,36 +1,38 @@
 name: cd
 
 on:
-    push:
-        branches:
-            - main
-            - staging
-    pull_request:
-        branches:
-            - main
-            - staging
+    workflow_run:
+        workflows: ['ci']
+        types:
+            - completed
 
 jobs:
     cd:
+        if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout
+            - name: Checkout code
               uses: actions/checkout@v2
 
-            - name: Prod Deployment
-              if: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')) || (github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'staging')) }}
+            - name: Deploy to Production Server
+              if: github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'staging'
               uses: appleboy/ssh-action@master
               with:
                   host: ${{ secrets.SSH_HOST }}
                   username: ${{ secrets.SSH_USERNAME }}
-                  password: ${{ secrets.SSH_PASSWORD }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   passphrase: ${{ secrets.SSH_PASSPHRASE }}
                   port: 22
                   script: |
+                      # Pull the latest Production Docker image
+                      docker pull ${{ secrets.DOCKER_USERNAME }}/cloud-api:latest
+
+                      # Navigate to the application directory
                       cd ~/app/cloud/cloud-api
                       git pull origin main
+
+                      # Update the .env file
                       rm -f .env.prod
                       echo "NODE_ENV=production" >> .env.prod
                       echo "DOCKER_ENVIRONMENT=true" > .env.prod
@@ -41,5 +43,9 @@ jobs:
                       echo "UTILITY_DB_NAME=${{ secrets.PROD_UTILITY_DB_NAME }}" >> .env.prod
                       echo "BASE_URL=${{ secrets.PROD_BASE_URL }}" >> .env.prod
                       echo "JWT_SECRET_KEY=${{ secrets.PROD_JWT_SECRET_KEY }}" >> .env.prod
-                      docker-compose -f docker/docker-compose.prod.yml build --no-cache
+
+                      # Restart the Docker container with the new image
                       docker-compose -f docker/docker-compose.prod.yml up -d --force-recreate
+
+                      # Clean up unused Docker resources
+                      docker system prune -a -f
