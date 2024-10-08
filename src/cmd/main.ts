@@ -37,7 +37,12 @@ class Main {
 	 */
 	private middlewares(): void {
 		this.app.enable('trust proxy');
-		this.app.use(helmet({ crossOriginEmbedderPolicy: false }));
+		this.app.use(
+			helmet({
+				crossOriginEmbedderPolicy: false,
+				contentSecurityPolicy: false,
+			}),
+		);
 		this.app.use(cors({ origin: '*' }));
 		this.app.use(express.json());
 		this.app.use(bodyParser.json());
