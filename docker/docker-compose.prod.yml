@@ -2,11 +2,8 @@ version: '3.8'
 
 services:
     cloud-api:
-        build:
-            context: ..
-            dockerfile: ./docker/dockerfile
+        image: bhaktibuana/cloud-api:latest
         container_name: cloud-api
-        image: cloud-api
         ports:
             - 4000:4000
         env_file:
