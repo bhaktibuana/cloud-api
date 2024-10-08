@@ -37,17 +37,18 @@ class Main {
 	 */
 	private middlewares(): void {
 		this.app.enable('trust proxy');
-		this.app.use(
-			helmet({
-				crossOriginEmbedderPolicy: false,
-				contentSecurityPolicy: false,
-			}),
-		);
+		this.app.use(helmet({ crossOriginEmbedderPolicy: false }));
 		this.app.use(cors({ origin: '*' }));
 		this.app.use(express.json());
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({ extended: true }));
-		this.app.use(express.static(path.join(process.cwd(), './public')));
+		this.app.use(
+			express.static(path.join(process.cwd(), './public'), {
+				setHeaders: (res) => {
+					res.setHeader('Cross-Origin-Resource-Policy', '*');
+				},
+			}),
+		);
 	}
 
 	/**
